@@ -1,0 +1,36 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.App {
+  display: flex;
+  height: 100vh;
+}
+
+.Navbar {
+  width: 250px; /* Adjust width as needed */
+  background-color: #f4f4f4; /* Adjust background color as needed */
+  overflow: auto;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.ProfileModal {
+  max-width: 400px; /* Adjust size as needed */
+  margin: auto;
+}
+
+@media (max-width: 768px) {
+  .App {
+    flex-direction: column;
+  }
+
+  .Navbar {
+    width: 100%;
+  }
+}
