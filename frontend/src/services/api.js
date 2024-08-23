@@ -21,16 +21,32 @@ export const fetchItems = async () => {
   }
 };
 
-// Fetch categories
 export const fetchCategories = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/categories`, {
-      headers: getAuthHeaders(), // Use the getAuthHeaders function
+      headers: getAuthHeaders(),
     });
-    return response.data; // Return the fetched categories
+    return response.data;
   } catch (error) {
     console.error("Error fetching categories:", error);
-    throw error; // Propagate error for handling in the calling function
+    throw error;
+  }
+};
+
+// Add category
+export const addCategory = async (name) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/categories`,
+      { name },
+      {
+        headers: getAuthHeaders(),
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error adding category:", error);
+    throw error;
   }
 };
 
@@ -93,5 +109,19 @@ export const updateItem = async (id, item) => {
   } catch (error) {
     console.error("Error updating item:", error);
     throw error; // Propagate error for handling in the calling function
+  }
+};
+export const fetchUserProfile = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(`${API_BASE_URL}/profile/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    throw error;
   }
 };

@@ -34,3 +34,14 @@ body {
     width: 100%;
   }
 }
+/* Backdrop Blur Effect */
+.modal-backdrop-blur {
+  position: fixed; /* Ensure it's positioned correctly */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  backdrop-filter: blur(10px); /* Apply the blur effect */
+  z-index: 999; /* Ensure it's above other content */
+}

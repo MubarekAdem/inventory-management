@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const itemRoutes = require("./routes/Items");
 const authRoutes = require("./routes/auth");
 const categoryRoutes = require("./routes/categories");
+const profileRoutes = require("./routes/profile"); // Assuming profileRoutes file
+
 const { authenticateJWT } = require("./middleware/authMiddleware");
 
 const app = express();
@@ -23,6 +25,7 @@ mongoose
 app.use("/api/items", authenticateJWT, itemRoutes);
 app.use("/api/auth", authRoutes); // No authentication needed for sign-up/sign-in
 app.use("/api/categories", authenticateJWT, categoryRoutes);
+app.use("/api/profile", authenticateJWT, profileRoutes); // Updated route
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -1,26 +1,27 @@
 const express = require("express");
-const Category = require("../models/category");
-
 const router = express.Router();
+const { authenticateJWT } = require("../middleware/authMiddleware");
+const Category = require("../models/Category");
 
-router.get("/", async (req, res) => {
+// Create a new category
+router.post("/", authenticateJWT, async (req, res) => {
+  const { name } = req.body;
   try {
-    const categories = await Category.find();
-    res.json(categories);
+    const category = new Category({ name });
+    await category.save();
+    res.status(201).json(category);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching categories" });
+    res.status(500).json({ error: "Failed to create category" });
   }
 });
 
-router.post("/", async (req, res) => {
-  const { name } = req.body;
-
+// Get all categories
+router.get("/", authenticateJWT, async (req, res) => {
   try {
-    const newCategory = new Category({ name });
-    await newCategory.save();
-    res.status(201).json(newCategory);
+    const categories = await Category.find({});
+    res.json(categories);
   } catch (error) {
-    res.status(500).json({ message: "Error adding category" });
+    res.status(500).json({ error: "Failed to fetch categories" });
   }
 });
 

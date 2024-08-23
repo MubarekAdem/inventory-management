@@ -53,7 +53,7 @@ function AuthForm({ onAuthSuccess }) {
         navigate("/signin");
       } else {
         response = await signIn(email, password);
-        localStorage.setItem("token", response.token);
+        localStorage.setItem("token", response.token); // Store token here
         onAuthSuccess(response.token);
         navigate("/items");
       }

@@ -1,12 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Label, TextInput } from "flowbite-react";
+import { Button, Label, TextInput, Select } from "flowbite-react";
 
-function AddItemForm({ onItemAdded }) {
-  const [itemName, setItemName] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
+function AddItemForm({ onItemAdded, initialItem }) {
+  const [itemName, setItemName] = useState(initialItem ? initialItem.name : "");
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialItem ? initialItem.category : ""
+  );
+  const [price, setPrice] = useState(initialItem ? initialItem.price : "");
+  const [quantity, setQuantity] = useState(
+    initialItem ? initialItem.quantity : ""
+  );
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    if (initialItem) {
+      setItemName(initialItem.name);
+      setSelectedCategory(initialItem.category);
+      setPrice(initialItem.price);
+      setQuantity(initialItem.quantity);
+    }
+  }, [initialItem]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const token = localStorage.getItem("authToken");
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/categories",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,31 +50,48 @@ function AddItemForm({ onItemAdded }) {
       return;
     }
 
-    const token = localStorage.getItem("authToken"); // Ensure token is retrieved
+    const token = localStorage.getItem("authToken");
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/items",
-        {
-          name: itemName,
-          quantity: parseInt(quantity, 10),
-          category: selectedCategory, // Category is now user-input text
-          price: parseFloat(price),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in request headers
+      if (initialItem) {
+        await axios.put(
+          `http://localhost:5000/api/items/${initialItem._id}`,
+          {
+            name: itemName,
+            quantity: parseInt(quantity, 10),
+            category: selectedCategory,
+            price: parseFloat(price),
           },
-        }
-      );
-      onItemAdded(response.data); // Notify parent component of the new item
-      // Clear form fields
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else {
+        const response = await axios.post(
+          "http://localhost:5000/api/items",
+          {
+            name: itemName,
+            quantity: parseInt(quantity, 10),
+            category: selectedCategory,
+            price: parseFloat(price),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        onItemAdded(response.data);
+      }
+
       setItemName("");
       setSelectedCategory("");
       setPrice("");
       setQuantity("");
     } catch (error) {
-      console.error("Error adding item:", error);
+      console.error("Error saving item:", error);
     }
   };
 
@@ -69,13 +120,21 @@ function AddItemForm({ onItemAdded }) {
       </div>
       <div>
         <Label htmlFor="category" value="Category" />
-        <TextInput
+        <Select
           id="category"
-          type="text"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
           required
-        />
+        >
+          <option value="" disabled>
+            Select a category
+          </option>
+          {categories.map((category) => (
+            <option key={category._id} value={category._id}>
+              {category.name}
+            </option>
+          ))}
+        </Select>
       </div>
       <div>
         <Label htmlFor="price" value="Price" />
@@ -90,7 +149,7 @@ function AddItemForm({ onItemAdded }) {
       </div>
 
       <Button gradientMonochrome="info" type="submit">
-        Add Item
+        {initialItem ? "Update Item" : "Add Item"}
       </Button>
     </form>
   );

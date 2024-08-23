@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Sidebar } from "flowbite-react";
 import {
   HiChartPie,
@@ -35,8 +35,12 @@ const Navbar = ({ onLogout, onProfileClick, darkMode }) => {
             <Sidebar.Item as={Link} to="/items">
               Inventories in Stock
             </Sidebar.Item>
-            <Sidebar.Item href="#">Sales</Sidebar.Item>
-            <Sidebar.Item href="#">Categories</Sidebar.Item>
+            <Sidebar.Item as={Link} to="/sales">
+              Sales
+            </Sidebar.Item>
+            <Sidebar.Item as={Link} to="/categories">
+              Categories
+            </Sidebar.Item>
           </Sidebar.Collapse>
 
           <Sidebar.Item
